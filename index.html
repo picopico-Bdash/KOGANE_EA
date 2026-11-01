@@ -55,6 +55,10 @@
   .meta div{font-size:.8rem;color:var(--mute)}
   .meta b{display:block;font:600 1.05rem "JetBrains Mono",monospace;color:var(--text)}
 
+  .freebox{position:relative;margin-top:26px;max-width:600px;display:flex;gap:14px;align-items:flex-start;background:rgba(212,168,67,.08);border:1px solid var(--gold3);border-left:4px solid var(--gold);border-radius:10px;padding:16px 18px}
+  .freebox .fb-tag{flex:none;font:700 .72rem "JetBrains Mono",monospace;letter-spacing:.1em;background:var(--gold);color:#1a1408;padding:4px 8px;border-radius:4px;margin-top:3px}
+  .freebox p{font-size:.92rem;color:var(--text)}
+  .freebox b{color:var(--gold2)}
   /* sections */
   section{padding:84px 0;border-bottom:1px solid var(--line)}
   .eyebrow{font:600 .75rem "JetBrains Mono",monospace;letter-spacing:.16em;color:var(--gold)}
@@ -135,6 +139,13 @@
       <span data-ja>HL-ATRシグナル × MAタッチの順張りと、カマリラ・ゾーンからの逆張り。2つのロジックを時間帯・上位足フィルターで制御し、ATRベースのSL/TPと2段階トレーリングで決済します。</span>
       <span data-en>Trend-following HL-ATR signal with MA touch, plus counter-trend Camarilla zone reversal — gated by session and higher-timeframe filters, with ATR-based SL/TP and a two-phase trailing stop.</span>
     </p>
+    <div class="freebox">
+      <span class="fb-tag">FREE</span>
+      <p>
+        <span data-ja><b>GitHubから無料でダウンロード</b>してお試しいただけます。KOGANEで利益が出た場合は、<b>MQL5 Marketでのご購入</b>で開発を応援していただけると嬉しいです。</span>
+        <span data-en><b>Download it free from GitHub</b> and try it out. If KOGANE makes a profit for you, please support development by <b>purchasing it on the MQL5 Market</b>.</span>
+      </p>
+    </div>
     <div class="cta">
       <a class="btn btn-gold js-mql5" href="#" target="_blank" rel="noopener">
         <span data-ja>MQL5 Market で見る</span><span data-en>View on MQL5 Market</span> →
@@ -232,19 +243,19 @@
       <div class="card">
         <h3>MQL5 Market <span class="badge">RECOMMENDED</span></h3>
         <p>
-          <span data-ja>MQL5公式マーケットで購入・レンタルできます。MT5のマーケットタブから直接インストールでき、アップデートも自動で配信されます。</span>
-          <span data-en>Buy or rent on the official MQL5 Market. Installs directly from MT5's Market tab and receives updates automatically.</span>
+          <span data-ja>MQL5公式マーケットで購入・レンタルできます。MT5のマーケットタブから直接インストールでき、アップデートも自動で配信されます。マーケットの検索欄で「<b>KOGANE</b>」と検索してください。</span>
+          <span data-en>Buy or rent on the official MQL5 Market. Installs directly from MT5's Market tab and receives updates automatically. Search for "<b>KOGANE</b>" in the Market search box.</span>
         </p>
         <a class="btn btn-gold js-mql5" href="#" target="_blank" rel="noopener"><span data-ja>MQL5 Market へ</span><span data-en>Go to MQL5 Market</span> →</a>
       </div>
       <div class="card">
         <h3><span data-ja>ファイルをダウンロード</span><span data-en>Download file</span></h3>
         <p>
-          <span data-ja>GitHubから最新版のファイルを直接ダウンロードできます。</span>
-          <span data-en>Download the latest file directly from GitHub.</span>
+          <span data-ja>GitHubのファイルページから最新版をダウンロードできます（ページ右上の「↓」ボタン）。</span>
+          <span data-en>Download the latest version from the GitHub file page (the "↓" button at the top right).</span>
           <br><span class="mono js-file" style="font-size:.8rem;color:var(--gold3)"></span>
         </p>
-        <a class="btn btn-line js-dl" href="#" download><span data-ja>ダウンロード</span><span data-en>Download</span> ↓</a>
+        <a class="btn btn-line js-dl" href="#" target="_blank" rel="noopener"><span data-ja>GitHub でファイルを開く</span><span data-en>Open file on GitHub</span> →</a>
       </div>
     </div>
   </div>
@@ -303,7 +314,7 @@ const CONFIG = {
 document.querySelectorAll('.js-mql5').forEach(a => a.href = CONFIG.mql5Url);
 document.querySelectorAll('.js-ver').forEach(e => e.textContent = CONFIG.version);
 const dl = document.querySelector('.js-dl');
-dl.href = `https://github.com/${CONFIG.repo}/raw/${CONFIG.branch}/${CONFIG.file}`;
+dl.href = `https://github.com/${CONFIG.repo}/blob/${CONFIG.branch}/${CONFIG.file}`;
 document.querySelector('.js-file').textContent = CONFIG.file;
 document.querySelector('.js-gh').href = `https://github.com/${CONFIG.repo}`;
 document.querySelector('.js-x').href = CONFIG.xUrl;
