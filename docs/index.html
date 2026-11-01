@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KOGANE gold EA — XAUUSD Expert Advisor for MetaTrader 5</title>
+<meta name="description" content="KOGANE gold EA: XAUUSD (Gold) automated trading Expert Advisor for MetaTrader 5. HL-ATR signal + Camarilla zone reversal.">
+<meta property="og:title" content="KOGANE gold EA">
+<meta property="og:description" content="XAUUSD Expert Advisor for MetaTrader 5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* ======== 設定 / CONFIG ======== */
+  /* リンク先は下の <script> 内 CONFIG で変更してください */
+
+  :root{
+    --bg:#0b0a08; --bg2:#13110d; --card:#17140f; --line:#2c261b;
+    --gold:#d4a843; --gold2:#f3d27a; --gold3:#8a6a22;
+    --text:#ece6d8; --mute:#a39a86; --warn:#e0a35a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:"Noto Sans JP",system-ui,sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased}
+  a{color:var(--gold2)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .mono{font-family:"JetBrains Mono",monospace}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:10;background:rgba(11,10,8,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{font-family:Cinzel,serif;font-weight:700;letter-spacing:.18em;color:var(--gold);text-decoration:none;font-size:1.15rem}
+  .navlinks{display:flex;gap:22px;align-items:center}
+  .navlinks a{color:var(--mute);text-decoration:none;font-size:.9rem}
+  .navlinks a:hover{color:var(--gold2)}
+  .lang{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .lang button{background:none;border:0;color:var(--mute);padding:5px 10px;font:600 .78rem "JetBrains Mono",monospace;cursor:pointer}
+  .lang button.on{background:var(--gold);color:#1a1408}
+  @media(max-width:720px){.navlinks a{display:none}}
+
+  /* hero */
+  .hero{position:relative;padding:110px 0 90px;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero::before{content:"";position:absolute;inset:-40% -10% auto auto;width:720px;height:720px;background:radial-gradient(circle,rgba(212,168,67,.22),transparent 62%);pointer-events:none}
+  .hero svg.chart{position:absolute;right:-40px;bottom:0;width:62%;max-width:700px;opacity:.55;pointer-events:none}
+  .tag{display:inline-block;font:600 .75rem "JetBrains Mono",monospace;letter-spacing:.12em;color:var(--gold);border:1px solid var(--gold3);padding:4px 10px;border-radius:4px;margin-bottom:22px}
+  h1{font-family:Cinzel,serif;font-size:clamp(2.6rem,7vw,4.6rem);line-height:1.05;letter-spacing:.06em;background:linear-gradient(180deg,var(--gold2),var(--gold) 55%,var(--gold3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .sub{font-size:1.15rem;color:var(--text);margin:18px 0 8px;max-width:560px;position:relative}
+  .hero .lead{color:var(--mute);max-width:560px;position:relative}
+  .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px;position:relative}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:8px;font-weight:700;text-decoration:none;font-size:.95rem;transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1a1408;box-shadow:0 6px 24px rgba(212,168,67,.25)}
+  .btn-line{border:1px solid var(--gold3);color:var(--gold2)}
+  .meta{display:flex;gap:28px;flex-wrap:wrap;margin-top:44px;position:relative}
+  .meta div{font-size:.8rem;color:var(--mute)}
+  .meta b{display:block;font:600 1.05rem "JetBrains Mono",monospace;color:var(--text)}
+
+  .freebox{position:relative;margin-top:26px;max-width:600px;display:flex;gap:14px;align-items:flex-start;background:rgba(212,168,67,.08);border:1px solid var(--gold3);border-left:4px solid var(--gold);border-radius:10px;padding:16px 18px}
+  .freebox .fb-tag{flex:none;font:700 .72rem "JetBrains Mono",monospace;letter-spacing:.1em;background:var(--gold);color:#1a1408;padding:4px 8px;border-radius:4px;margin-top:3px}
+  .freebox p{font-size:.92rem;color:var(--text)}
+  .freebox b{color:var(--gold2)}
+  /* sections */
+  section{padding:84px 0;border-bottom:1px solid var(--line)}
+  .eyebrow{font:600 .75rem "JetBrains Mono",monospace;letter-spacing:.16em;color:var(--gold)}
+  h2{font-size:1.8rem;margin:8px 0 34px;font-weight:700}
+  .grid{display:grid;gap:18px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:26px}
+  .card h3{font-size:1.05rem;margin-bottom:10px;color:var(--gold2)}
+  .card p,.card li{color:var(--mute);font-size:.92rem}
+  .card ul{padding-left:1.1em}
+  .num{font:600 .8rem "JetBrains Mono",monospace;color:var(--gold3);margin-bottom:6px}
+
+  /* spec table */
+  table{width:100%;border-collapse:collapse;font-size:.92rem}
+  th,td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--mute);font-weight:500;width:34%}
+  td code{font-family:"JetBrains Mono",monospace;font-size:.85rem;color:var(--gold2)}
+
+  /* steps */
+  .steps{counter-reset:s;display:grid;gap:14px}
+  .step{display:flex;gap:18px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+  .step::before{counter-increment:s;content:counter(s);flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:#1a1408;font:700 .95rem "JetBrains Mono",monospace}
+  .step b{display:block;margin-bottom:2px}
+  .step span{color:var(--mute);font-size:.9rem}
+  .step code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--gold2);background:#0f0d0a;padding:1px 6px;border-radius:4px}
+
+  /* download */
+  .dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+  .dl .card{display:flex;flex-direction:column}
+  .dl .card .btn{margin-top:auto;align-self:flex-start}
+  .dl .card p{margin-bottom:22px}
+  .badge{font:600 .7rem "JetBrains Mono",monospace;padding:3px 8px;border-radius:4px;background:rgba(212,168,67,.12);color:var(--gold);margin-left:8px;vertical-align:middle}
+
+  /* risk */
+  .risk{background:#140f08;border:1px solid #4a3416;border-radius:12px;padding:24px 26px}
+  .risk h3{color:var(--warn);font-size:1rem;margin-bottom:10px}
+  .risk li{color:var(--mute);font-size:.88rem;margin-left:1.1em}
+
+  footer{padding:40px 0 60px;color:var(--mute);font-size:.82rem}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+
+  [data-en]{display:none}
+  html[lang=en] [data-ja]{display:none}
+  html[lang=en] [data-en]{display:revert}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#" class="logo">KOGANE</a>
+    <div class="navlinks">
+      <a href="#features"><span data-ja>特徴</span><span data-en>Features</span></a>
+      <a href="#spec"><span data-ja>仕様</span><span data-en>Specs</span></a>
+      <a href="#download"><span data-ja>入手</span><span data-en>Get it</span></a>
+      <a href="#install"><span data-ja>導入</span><span data-en>Install</span></a>
+      <div class="lang"><button data-l="ja" class="on">JA</button><button data-l="en">EN</button></div>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <svg class="chart" viewBox="0 0 700 320" aria-hidden="true">
+    <defs><linearGradient id="gl" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d4a843" stop-opacity=".35"/><stop offset="1" stop-color="#d4a843" stop-opacity="0"/></linearGradient></defs>
+    <g id="candles"></g>
+    <path id="area" fill="url(#gl)"/>
+    <path id="ema" fill="none" stroke="#f3d27a" stroke-width="2"/>
+  </svg>
+  <div class="wrap">
+    <span class="tag">XAUUSD · MT5 · EXPERT ADVISOR</span>
+    <h1>KOGANE<br>gold EA</h1>
+    <p class="sub">
+      <span data-ja>ゴールド（XAUUSD）専用の MetaTrader 5 自動売買 EA</span>
+      <span data-en>An automated Expert Advisor for Gold (XAUUSD) on MetaTrader 5</span>
+    </p>
+    <p class="lead">
+      <span data-ja>HL-ATRシグナル × MAタッチの順張りと、カマリラ・ゾーンからの逆張り。2つのロジックを時間帯・上位足フィルターで制御し、ATRベースのSL/TPと2段階トレーリングで決済します。</span>
+      <span data-en>Trend-following HL-ATR signal with MA touch, plus counter-trend Camarilla zone reversal — gated by session and higher-timeframe filters, with ATR-based SL/TP and a two-phase trailing stop.</span>
+    </p>
+    <div class="freebox">
+      <span class="fb-tag">FREE</span>
+      <p>
+        <span data-ja><b>GitHubから無料でダウンロード</b>してお試しいただけます。KOGANEで利益が出た場合は、<b>MQL5 Marketでのご購入</b>で開発を応援していただけると嬉しいです。</span>
+        <span data-en><b>Download it free from GitHub</b> and try it out. If KOGANE makes a profit for you, please support development by <b>purchasing it on the MQL5 Market</b>.</span>
+      </p>
+    </div>
+    <div class="cta">
+      <a class="btn btn-gold js-mql5" href="#" target="_blank" rel="noopener">
+        <span data-ja>MQL5 Market で見る</span><span data-en>View on MQL5 Market</span> →
+      </a>
+      <a class="btn btn-line" href="#download"><span data-ja>ダウンロード</span><span data-en>Download</span></a>
+    </div>
+    <div class="meta">
+      <div><b class="js-ver">v2.00</b><span data-ja>バージョン</span><span data-en>Version</span></div>
+      <div><b>XAUUSD</b><span data-ja>対象銘柄</span><span data-en>Symbol</span></div>
+      <div><b>M1</b><span data-ja>エントリー足（変更可）</span><span data-en>Entry TF (configurable)</span></div>
+      <div><b>MT5</b><span data-ja>プラットフォーム</span><span data-en>Platform</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="eyebrow">STRATEGY</div>
+    <h2><span data-ja>2つのエントリーロジック</span><span data-en>Two entry engines</span></h2>
+    <div class="grid g2">
+      <div class="card">
+        <div class="num">COND.1 — TREND</div>
+        <h3><span data-ja>HL-ATRシグナル + BBブレイク + MAタッチ</span><span data-en>HL-ATR signal + BB break + MA touch</span></h3>
+        <p>
+          <span data-ja>値幅（高値−安値）がATRに対して大きく伸びたバーをシグナルとして検出し、その後の押し目・戻りでEMAにタッチしたタイミングでエントリー。押し目の質（陽線/陰線タッチ）やエントリー時のHL-ATR上限でダマシを抑えます。</span>
+          <span data-en>Detects bars whose high–low range expands sharply relative to ATR, then enters on the pullback when price touches the EMA. Pullback-quality and max-HL-ATR checks filter out weak setups.</span>
+        </p>
+      </div>
+      <div class="card">
+        <div class="num">COND.2 — REVERSAL</div>
+        <h3><span data-ja>カマリラ・ゾーン反転（BB ±2σ + RSI）</span><span data-en>Camarilla zone reversal (BB ±2σ + RSI)</span></h3>
+        <p>
+          <span data-ja>カマリラ・ピボットの水準付近でボリンジャーバンド±2σの外側から戻し、RSIが過熱圏にあるときに逆張りエントリー。利確は反対側ゾーンの水準を利用できます。</span>
+          <span data-en>Counter-trend entries near Camarilla pivot levels when price snaps back from outside the ±2σ Bollinger Band with RSI at an extreme. Take-profit can target the opposite zone level.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card">
+        <h3><span data-ja>フィルター</span><span data-en>Filters</span></h3>
+        <ul>
+          <li><span data-ja>D1方向フィルター（当日始値基準）</span><span data-en>D1 direction filter (daily open)</span></li>
+          <li><span data-ja>上位足EMAフィルター（既定H1）</span><span data-en>Higher-TF EMA filter (H1 default)</span></li>
+          <li><span data-ja>アジア/欧州/米国の3セッション時間帯</span><span data-en>Asia / Europe / America sessions</span></li>
+          <li><span data-ja>スプレッドフィルター</span><span data-en>Spread filter</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span data-ja>決済・資金管理</span><span data-en>Exits &amp; money management</span></h3>
+        <ul>
+          <li><span data-ja>H1 ATRベースのSL/TP</span><span data-en>H1-ATR based SL/TP</span></li>
+          <li><span data-ja>2段階トレーリング（N本安値/高値 → シャンデリア）</span><span data-en>Two-phase trail (N-bar → Chandelier)</span></li>
+          <li><span data-ja>リスク%による自動ロット / 固定ロット</span><span data-en>Risk-% auto lot / fixed lot</span></li>
+          <li><span data-ja>日次損失上限・SL後クールダウン</span><span data-en>Daily loss limit, post-SL cooldown</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span data-ja>堅牢性</span><span data-en>Robustness</span></h3>
+        <ul>
+          <li><span data-ja>STOPS/FREEZEレベル対策と自動リトライ</span><span data-en>STOPS/FREEZE-level hardening + retries</span></li>
+          <li><span data-ja>多重起動ロック（マジック+銘柄）</span><span data-en>Multi-instance lock (magic + symbol)</span></li>
+          <li><span data-ja>再起動時の状態復元</span><span data-en>State reconciliation on restart</span></li>
+          <li><span data-ja>独自OnTester最適化指標（5種）</span><span data-en>Custom OnTester criteria (5 modes)</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="spec">
+  <div class="wrap">
+    <div class="eyebrow">SPECIFICATIONS</div>
+    <h2><span data-ja>仕様</span><span data-en>Specifications</span></h2>
+    <div class="card" style="padding:6px 10px">
+      <table>
+        <tr><th><span data-ja>プラットフォーム</span><span data-en>Platform</span></th><td>MetaTrader 5</td></tr>
+        <tr><th><span data-ja>対象銘柄</span><span data-en>Symbol</span></th><td>XAUUSD (Gold)</td></tr>
+        <tr><th><span data-ja>エントリー時間足</span><span data-en>Entry timeframe</span></th><td>M1 <span data-ja>（<code>InpEntryTF</code> で変更可）</span><span data-en>(configurable via <code>InpEntryTF</code>)</span></td></tr>
+        <tr><th><span data-ja>既定リスク</span><span data-en>Default risk</span></th><td><code>InpRiskPct = 5.0</code> % <span data-ja>/ トレード</span><span data-en>per trade</span></td></tr>
+        <tr><th><span data-ja>日次損失上限</span><span data-en>Daily loss limit</span></th><td><code>InpDailyLossMaxPct = 3.0</code> %</td></tr>
+        <tr><th><span data-ja>SL / TP</span><span data-en>SL / TP</span></th><td>SL = H1 ATR × <code>0.5</code>, TP = H1 ATR × <code>2.0</code></td></tr>
+        <tr><th><span data-ja>時間帯（サーバー時刻）</span><span data-en>Sessions (server time)</span></th><td><span data-ja>アジア / 欧州 / 米国の3枠を個別にON/OFF・時刻設定</span><span data-en>Asia / Europe / America, each with its own on/off and hours</span></td></tr>
+        <tr><th><span data-ja>推奨</span><span data-en>Recommended</span></th><td><span data-ja>VPSでの24時間稼働、低スプレッド口座</span><span data-en>24/7 VPS, low-spread account</span></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="eyebrow">GET KOGANE</div>
+    <h2><span data-ja>入手方法</span><span data-en>Get KOGANE</span></h2>
+    <div class="dl">
+      <div class="card">
+        <h3>MQL5 Market <span class="badge">RECOMMENDED</span></h3>
+        <p>
+          <span data-ja>MQL5公式マーケットで購入・レンタルできます。MT5のマーケットタブから直接インストールでき、アップデートも自動で配信されます。マーケットの検索欄で「<b>KOGANE</b>」と検索してください。</span>
+          <span data-en>Buy or rent on the official MQL5 Market. Installs directly from MT5's Market tab and receives updates automatically. Search for "<b>KOGANE</b>" in the Market search box.</span>
+        </p>
+        <a class="btn btn-gold js-mql5" href="#" target="_blank" rel="noopener"><span data-ja>MQL5 Market へ</span><span data-en>Go to MQL5 Market</span> →</a>
+      </div>
+      <div class="card">
+        <h3><span data-ja>ファイルをダウンロード</span><span data-en>Download file</span></h3>
+        <p>
+          <span data-ja>GitHubのファイルページから最新版をダウンロードできます（ページ右上の「↓」ボタン）。</span>
+          <span data-en>Download the latest version from the GitHub file page (the "↓" button at the top right).</span>
+          <br><span class="mono js-file" style="font-size:.8rem;color:var(--gold3)"></span>
+        </p>
+        <a class="btn btn-line js-dl" href="#" target="_blank" rel="noopener"><span data-ja>GitHub でファイルを開く</span><span data-en>Open file on GitHub</span> →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <div class="eyebrow">INSTALL</div>
+    <h2><span data-ja>導入手順（ダウンロード版）</span><span data-en>Installation (downloaded file)</span></h2>
+    <div class="steps">
+      <div class="step"><div><b><span data-ja>データフォルダを開く</span><span data-en>Open the data folder</span></b><span><span data-ja>MT5で「ファイル」→「データフォルダを開く」。</span><span data-en>In MT5: File → Open Data Folder.</span></span></div></div>
+      <div class="step"><div><b><span data-ja>ファイルを配置</span><span data-en>Copy the file</span></b><span><span data-ja>ダウンロードしたファイルを <code>MQL5/Experts/</code> にコピー。</span><span data-en>Copy the downloaded file into <code>MQL5/Experts/</code>.</span></span></div></div>
+      <div class="step"><div><b><span data-ja>コンパイル / 更新</span><span data-en>Compile / refresh</span></b><span><span data-ja>.mq5 の場合はMetaEditorで開いてコンパイル。ナビゲーターで右クリック→「更新」。</span><span data-en>For a .mq5, open it in MetaEditor and compile. Then right-click the Navigator → Refresh.</span></span></div></div>
+      <div class="step"><div><b><span data-ja>チャートに適用</span><span data-en>Attach to chart</span></b><span><span data-ja>XAUUSD の M1 チャートにドラッグし、「アルゴリズム取引を許可」をON。</span><span data-en>Drag it onto an XAUUSD M1 chart and enable "Allow Algo Trading".</span></span></div></div>
+      <div class="step"><div><b><span data-ja>まずはデモ口座で</span><span data-en>Start on a demo account</span></b><span><span data-ja>ブローカーごとにサーバー時刻（GMTオフセット）が異なるため、時間帯パラメータを確認してからデモで動作確認してください。</span><span data-en>Broker server time (GMT offset) differs, so check the session hours and verify on a demo account first.</span></span></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="border-bottom:0">
+  <div class="wrap">
+    <div class="risk">
+      <h3><span data-ja>⚠ リスクに関する注意事項</span><span data-en>⚠ Risk disclosure</span></h3>
+      <ul>
+        <li><span data-ja>FX・CFD取引は元本を超える損失が発生する可能性があります。</span><span data-en>Trading FX/CFDs carries a high level of risk and losses can exceed deposits.</span></li>
+        <li><span data-ja>過去のバックテスト・運用成績は将来の利益を保証するものではありません。</span><span data-en>Past backtest or live performance does not guarantee future results.</span></li>
+        <li><span data-ja>本EAは投資助言ではなく、利用はすべてご自身の判断と責任で行ってください。</span><span data-en>This EA is not investment advice. Use it at your own discretion and risk.</span></li>
+        <li><span data-ja>既定のリスク設定（1トレード5%）は高めです。資金と許容度に合わせて調整してください。</span><span data-en>The default risk (5% per trade) is aggressive — adjust it to your capital and tolerance.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2025 Kogane · KOGANE gold EA</div>
+    <div>
+      <a class="js-x" href="#" target="_blank" rel="noopener">X / Twitter</a> ·
+      <a class="js-gh" href="#" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ===== ここを編集 / EDIT HERE ===== */
+const CONFIG = {
+  version:  "v2.00",
+  mql5Url:  "https://www.mql5.com/ja/market",   // ← KOGANEの商品ページURLに差し替え
+  repo:     "picopico-Bdash/KOGANE_EA",
+  branch:   "main",
+  file:     "KOGANE_gold_EA.mq5",                 // ← .ex5 配布にする場合はファイル名を変更
+  xUrl:     "https://x.com/EALab6754"
+};
+/* ================================== */
+
+document.querySelectorAll('.js-mql5').forEach(a => a.href = CONFIG.mql5Url);
+document.querySelectorAll('.js-ver').forEach(e => e.textContent = CONFIG.version);
+const dl = document.querySelector('.js-dl');
+dl.href = `https://github.com/${CONFIG.repo}/blob/${CONFIG.branch}/${CONFIG.file}`;
+document.querySelector('.js-file').textContent = CONFIG.file;
+document.querySelector('.js-gh').href = `https://github.com/${CONFIG.repo}`;
+document.querySelector('.js-x').href = CONFIG.xUrl;
+
+/* language toggle */
+function setLang(l){
+  document.documentElement.lang = l;
+  document.querySelectorAll('.lang button').forEach(b => b.classList.toggle('on', b.dataset.l === l));
+  try{ localStorage.setItem('kogane-lang', l); }catch(e){}
+}
+document.querySelectorAll('.lang button').forEach(b => b.onclick = () => setLang(b.dataset.l));
+let saved = null; try{ saved = localStorage.getItem('kogane-lang'); }catch(e){}
+setLang(saved || ((navigator.language || 'ja').startsWith('ja') ? 'ja' : 'en'));
+
+/* decorative candle chart */
+(function(){
+  const g=document.getElementById('candles'), W=700, H=320, n=46, w=W/n;
+  let seed=7; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const bars=[]; let p=100;
+  for(let i=0;i<n;i++){
+    const o=p, c=o+1.2+Math.sin(i/5)*2.2+(rnd()-.5)*5;
+    bars.push({o,c,hi:Math.max(o,c)+rnd()*3,lo:Math.min(o,c)-rnd()*3}); p=c;
+  }
+  const mn=Math.min(...bars.map(b=>b.lo)), mx=Math.max(...bars.map(b=>b.hi));
+  const y=v=>H-30-(v-mn)/(mx-mn)*(H-80);
+  let html='', ema=bars[0].c, k=2/11, pts=[];
+  bars.forEach((b,i)=>{
+    const x=i*w+w/2, col=b.c>=b.o?'#d4a843':'#5a4a2a';
+    html+=`<line x1="${x}" x2="${x}" y1="${y(b.hi)}" y2="${y(b.lo)}" stroke="${col}"/>`+
+          `<rect x="${x-w*.3}" y="${Math.min(y(b.o),y(b.c))}" width="${w*.6}" height="${Math.max(2,Math.abs(y(b.c)-y(b.o)))}" fill="${col}"/>`;
+    ema=b.c*k+ema*(1-k); pts.push([x,y(ema)]);
+  });
+  g.innerHTML=html;
+  const d=pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ');
+  document.getElementById('ema').setAttribute('d',d);
+  document.getElementById('area').setAttribute('d',d+` L${pts[n-1][0]} ${H} L${pts[0][0]} ${H} Z`);
+})();
+</script>
+</body>
+</html>
