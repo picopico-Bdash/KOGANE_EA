@@ -86,6 +86,10 @@
   .step span{color:var(--mute);font-size:.9rem}
   .step code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--gold2);background:#0f0d0a;padding:1px 6px;border-radius:4px}
 
+  .step > div > span{display:block}
+  .shot{margin-top:12px;display:block;width:fit-content;max-width:100%;padding:10px;border-radius:8px;background:#0f0d0a;border:1px solid var(--line)}
+  .shot.light{background:#fff}
+  .shot img{display:block;max-width:100%;height:auto}
   /* download */
   .dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
   .dl .card{display:flex;flex-direction:column}
@@ -264,13 +268,36 @@
 <section id="install">
   <div class="wrap">
     <div class="eyebrow">INSTALL</div>
-    <h2><span data-ja>導入手順（ダウンロード版）</span><span data-en>Installation (downloaded file)</span></h2>
+    <h2><span data-ja>導入手順（GitHub版）</span><span data-en>Installation (GitHub version)</span></h2>
     <div class="steps">
-      <div class="step"><div><b><span data-ja>データフォルダを開く</span><span data-en>Open the data folder</span></b><span><span data-ja>MT5で「ファイル」→「データフォルダを開く」。</span><span data-en>In MT5: File → Open Data Folder.</span></span></div></div>
-      <div class="step"><div><b><span data-ja>ファイルを配置</span><span data-en>Copy the file</span></b><span><span data-ja>ダウンロードしたファイルを <code>MQL5/Experts/</code> にコピー。</span><span data-en>Copy the downloaded file into <code>MQL5/Experts/</code>.</span></span></div></div>
-      <div class="step"><div><b><span data-ja>コンパイル / 更新</span><span data-en>Compile / refresh</span></b><span><span data-ja>.mq5 の場合はMetaEditorで開いてコンパイル。ナビゲーターで右クリック→「更新」。</span><span data-en>For a .mq5, open it in MetaEditor and compile. Then right-click the Navigator → Refresh.</span></span></div></div>
-      <div class="step"><div><b><span data-ja>チャートに適用</span><span data-en>Attach to chart</span></b><span><span data-ja>XAUUSD の M1 チャートにドラッグし、「アルゴリズム取引を許可」をON。</span><span data-en>Drag it onto an XAUUSD M1 chart and enable "Allow Algo Trading".</span></span></div></div>
-      <div class="step"><div><b><span data-ja>まずはデモ口座で</span><span data-en>Start on a demo account</span></b><span><span data-ja>ブローカーごとにサーバー時刻（GMTオフセット）が異なるため、時間帯パラメータを確認してからデモで動作確認してください。</span><span data-en>Broker server time (GMT offset) differs, so check the session hours and verify on a demo account first.</span></span></div></div>
+      <div class="step"><div>
+        <b><span data-ja>「GitHub でファイルを開く」を押す</span><span data-en>Click "Open file on GitHub"</span></b>
+        <span><span data-ja>このページの「入手方法」にあるボタンを押します。</span><span data-en>Click the button in the "Get KOGANE" section of this page.</span></span>
+        <figure class="shot"><img src="img/step1-open.png" alt="GitHub でファイルを開く ボタン" width="271" height="65"></figure>
+      </div></div>
+      <div class="step"><div>
+        <b><span data-ja>GitHubのページ右上の「↓」を押す</span><span data-en>Click "↓" at the top right of the GitHub page</span></b>
+        <span><span data-ja>ファイル表示の右上にあるアイコンのうち、赤丸の「↓」（Download raw file）を押します。</span><span data-en>Among the icons at the top right of the file view, click the circled "↓" (Download raw file).</span></span>
+        <figure class="shot light"><img src="img/step2-download.png" alt="GitHub の Download raw file ボタン" width="314" height="65"></figure>
+      </div></div>
+      <div class="step"><div>
+        <b><span data-ja>ダウンロード完了</span><span data-en>Download complete</span></b>
+        <span><span data-ja>ブラウザのダウンロード一覧に <code>KOGANE_gold_EA.mq5</code> が表示されれば完了です。</span><span data-en><code>KOGANE_gold_EA.mq5</code> appears in your browser's download list.</span></span>
+        <figure class="shot light"><img src="img/step3-complete.png" alt="ダウンロード完了画面" width="349" height="105"></figure>
+      </div></div>
+      <div class="step"><div>
+        <b><span data-ja>ファイルを MQL5/Experts フォルダへ移動</span><span data-en>Move the file to the MQL5/Experts folder</span></b>
+        <span><span data-ja>MT5で「ファイル」→「データフォルダを開く」を選び、開いたフォルダの <code>MQL5</code> → <code>Experts</code> に、ダウンロードした <code>KOGANE_gold_EA.mq5</code> を移動します（ダウンロード一覧のフォルダアイコンから保存場所を開けます）。ダウンロードフォルダのままだとMT5にEAが表示されません。</span><span data-en>In MT5, choose File → Open Data Folder, then move the downloaded <code>KOGANE_gold_EA.mq5</code> into <code>MQL5</code> → <code>Experts</code> (the folder icon in the download list opens its location). If left in the Downloads folder, MT5 will not list the EA.</span></span>
+      </div></div>
+      <div class="step"><div>
+        <b><span data-ja>移動したファイルを開く</span><span data-en>Open the moved file</span></b>
+        <span><span data-ja><code>MQL5/Experts</code> 内の <code>KOGANE_gold_EA.mq5</code> をダブルクリックすると、MQL5エディター（MetaEditor）で開きます。</span><span data-en>Double-click <code>KOGANE_gold_EA.mq5</code> in <code>MQL5/Experts</code>; it opens in MetaEditor (MQL5 editor).</span></span>
+      </div></div>
+      <div class="step"><div>
+        <b><span data-ja>MQL5エディター上部の「コンパイル」を押す</span><span data-en>Click "Compile" at the top of MetaEditor</span></b>
+        <span><span data-ja>エディター上部ツールバーの「コンパイル」ボタンを押します。エラー0件で完了です。</span><span data-en>Click the "Compile" button on MetaEditor's toolbar. Done when it shows 0 errors.</span></span>
+        <figure class="shot light"><img src="img/step5-compile.png" alt="MetaEditor のコンパイルボタン" width="183" height="50"></figure>
+      </div></div>
     </div>
   </div>
 </section>
